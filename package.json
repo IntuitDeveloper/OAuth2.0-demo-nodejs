@@ -1,0 +1,41 @@
+{
+  "name": "intuit-demos-webhooks",
+  "version": "0.0.1",
+  "description": "A sample NodeJs application to demonstrate Webhooks and capture the notifications into a (csv) format file. This demo includes OAuth2.0",
+  "scripts": {
+    "start": "node app",
+    "test": "./node_modules/mocha/bin/mocha test/**/*-test.js --reporter spec"
+  },
+  "author": "anil_kumar",
+  "license": "MIT",
+  "homepage": "https://github.com/anilkumarbp/SampleApp-WebhookNotifications-nodejs",
+  "dependencies": {
+    "atob": "^2.0.3",
+    "body-parser": "latest",
+    "btoa": "^1.1.2",
+    "client-oauth2": "^3.2.0",
+    "crypto": "0.0.3",
+    "csrf": "^3.0.4",
+    "dotenv": "latest",
+    "ejs": "^2.5.2",
+    "exceljs": "^0.8.2",
+    "expect": "^1.20.2",
+    "express": "^4.14.0",
+    "express-handlebars": "latest",
+    "express-session": "^1.14.2",
+    "fs": "0.0.1-security",
+    "handlebars": "^4.0.5",
+    "https": "^1.0.0",
+    "json2csv": "^3.11.5",
+    "json2xls": "^0.1.2",
+    "jsonwebtoken": "^7.1.9",
+    "mustache-express": "latest",
+    "node-quickbooks": "^2.0.21",
+    "path": "^0.12.7",
+    "query-string": "^5.0.1",
+    "request": "^2.78.0",
+    "rsa-pem-from-mod-exp": "^0.8.4",
+    "save": "^2.3.2",
+    "xlsx-template": "^0.2.0"
+  }
+}
