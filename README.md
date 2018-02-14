@@ -25,13 +25,13 @@ $ npm install
 ## Pre-requisites
 
 * **Create an Intuit Developer account and app**:  
-You must have an Intuit Developer account and have created an app within that account. The app serves as a container for the OAuth workflow.
+You must have an Intuit Developer account and have created an app. To know more refer ot he [Get Started](https://developer.intuit.com/docs/00_quickbooks_online/1_get_started/00_get_started) 
 * **Get client keys**:    
   Obtain OAuth 2.0 client keys from your app's dashboard on developer.intuit.com.  To locate the app's dashboard, sign in to developer.intuit.com and click My Apps. Find and open the app you want. From here, click the Keys tab. There are two versions of this key:
   * Development keys—use only in the sandbox environment.
   * Production keys—use only in the production environment. 
 * **Define redirect URI**:  
- On the app setting page, create one or more redirect URIs. These URIs handle responses from the OAuth 2.0 server and are called after the user authorizes the connection. URIs in this list are the only ones to which the authorization response can be sent from the OAuth 2.0 server.   You must define at least one URI specifically for your application's auth endpoint before you can use OAuth 2.0. For the sandbox environment, this list can include http://localhost. As a best practice, design your app's auth endpoints in a way that doesn't expose authorization codes to other resources on the page.
+ On the app setting page, create one or more redirect URIs. These URIs handle responses from the OAuth 2.0 server and are called after the user authorizes the connection.
 
 
 ## Configuration
