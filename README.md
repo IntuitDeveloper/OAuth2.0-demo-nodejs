@@ -61,7 +61,7 @@ This will expose localhost:3000 to the Internet. Your endpoint url will now be h
 
 ## Difference between OAuth2.0 and OpenID Connect
 
-Lets take a look at the key differences between OAuth2.0 and OpenID connect as per the authorization flow is considered :
+Lets take a look at the key differences between OAuth2.0 and OpenID connect as per the authorization flow is :
 ![Auth Flow](views/oauth2flow.png)
  
 

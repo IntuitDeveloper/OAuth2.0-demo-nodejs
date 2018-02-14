@@ -60,4 +60,6 @@ typings/
 # config variables
 config.json
 
+# idea files
+.idea/
 
