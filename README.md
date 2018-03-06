@@ -81,7 +81,6 @@ This will expose localhost:3000 to the Internet. Your endpoint url will now be h
 ## Difference between OAuth2.0 and OpenID Connect
 
 Lets take a look at the key differences between OAuth2.0 and OpenID connect as per the authorization flow is :
-![Auth Flow](views/oauth2flow.png)
  
 
 * **OAuth2.0**  
@@ -115,7 +114,7 @@ Lets take a look at the key differences between OAuth2.0 and OpenID connect as p
           address - user's physical address                   
     ![APP screenshots](views/openIDConnect_scopes.png)
                        
-    * OAuth2.0 authorization flow  
+    * OpenID Connect authorization flow  
     ![APP screenshots](views/openIdConnectflow.png)  
  
     * OpenID Connect Documentation - click [here](https://developer.intuit.com/docs/00_quickbooks_online/2_build/10_authentication_and_authorization/50_identity/20_openid_connect) 
