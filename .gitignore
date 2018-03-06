@@ -63,3 +63,5 @@ config.json
 # idea files
 .idea/
 
+# DS Store files
+.DS_Store

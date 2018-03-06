@@ -17,26 +17,19 @@
             }
             var OAuthCode = function(config) {
                 this.config = config;
-                this.loginPopup = function (parameter) {
-                    this.loginPopupUri(parameter);
-                }
-                this.loginPopupUri = function (parameter) {
-
-                    console.log("The config object is :"+ JSON.stringify());
-                    $.get('/authUri', parameter, function (uri) {
+                this.authUri = function () {
+                    
+                    // Generate the authUri
+                    $.get('/authUri', function (uri) {
                         config.authUri = uri
-
                     }).then(function () {
 
-                        // Launch Popup
+                        // Launch Popup using the JS window Object
                         var parameters = "location=1,width=800,height=650";
                         parameters += ",left=" + (screen.width - 800) / 2 + ",top=" + (screen.height - 650) / 2;
-
-                        console.log("Yhe config authUri is :"+config.authUri);
                         var win = window.open(config.authUri, 'connectPopup', parameters);
                         var pollOAuth = window.setInterval(function () {
                             try {
-                                console.log("The window URL is :" + win.document.URL);
                                 if (win.document.URL.indexOf("code") != -1) {
                                     window.clearInterval(pollOAuth);
                                     win.close();
@@ -46,9 +39,17 @@
                                 console.log(e)
                             }
                         }, 100);
-
                     });
                 }
+                this.refresh = function(){
+
+                    $.get('/refreshAccessToken', function(data){
+                        console.log('The backend refresh called');
+                        var json = JSON.stringify(data, null, 2);
+                        $( '#accessToken' ).html( json );
+
+                    });
+                };
             }
 
             var APIDemo = function() {
@@ -87,15 +88,9 @@
 
             <h2>OAuth2.0</h2><h4>( Please refer to the <a target="_balnk" href="https://developer.intuit.com/docs/00_quickbooks_online/2_build/10_authentication_and_authorization/10_oauth_2.0">OAuth2.0 Documentation</a> )</h4>
             <p>If there is no access token or the access token is invalid, click the <b>Connect to QuickBooks</b> button below.</p>
-            <pre>{{ oauth2_token_json }}</pre>
-            <a class="imgLink" href="#" onclick="oauth.loginPopup()"><img src="C2QB_green_btn_lg_default.png" width="178" /></a>
-            <hr />
-
-
-            <h2>OpenID Connect</h2><h4>( Please refer to the <a target="_balnk" href="https://developer.intuit.com/docs/00_quickbooks_online/2_build/10_authentication_and_authorization/50_identity/20_openid_connect">OpenID Connect Documentation</a> )</h4>
-            <p>If there is no access token or the access token is invalid, click the <b>Connect to QucikBooks</b> button below.</p>
-            <pre>{{ openIDConnect_token_json }}</pre>
-            <a class="imgLink" href="#" onclick="oauth.loginPopup({openIDConnect: true})"><img src="IntuitSignIn-lg-blue@2x copy.jpg" width="178" /></a>
+            <pre id="accessToken">{{ oauth2_token_json }}</pre>
+            <a class="imgLink" href="#" onclick="oauth.authUri()"><img src="C2QB_green_btn_lg_default.png" width="178" /></a>
+            <button  type="button" id="refreshToken" class="btn btn-success" onclick="oauth.refresh()">Refresh Token</button>
             <hr />
 
             <h2>Make an API call</h2><h4>( Please refer to our <a target="_balnk" href="https://developer.intuit.com/v2/apiexplorer?apiname=V3QBO#?id=Account">API Explorer</a> )</h4>
