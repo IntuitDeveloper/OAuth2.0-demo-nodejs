@@ -63,7 +63,7 @@ By default, the RedirectURI is set to the following for this demo:
 
 `http://localhost:3000/callback`
 
-![Keys](views/keys.png)
+![Keys](views/Keys.png)
 
 
 ### TLS / SSL (**optional**)
