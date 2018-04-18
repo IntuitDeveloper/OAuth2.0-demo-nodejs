@@ -1,3 +1,5 @@
+[![Sample Banner](views/Sample.png)][ss1]
+
 [![Build Status](https://travis-ci.org/IntuitDeveloper/OAuth2.0-demo-nodejs.svg?branch=master)](https://travis-ci.org/IntuitDeveloper/OAuth2.0-demo-nodejs)
 [![npm (scoped)](https://img.shields.io/npm/v/@cycle/core.svg)]()
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
@@ -143,3 +145,6 @@ Then click the <input type="button" value="Login (OAuth2.0)"> button to authoriz
 Events are logged to the Node.js console.
 
 ![APP screenshots](views/HomePage.png)
+
+[ss1]: https://help.developer.intuit.com/s/samplefeedback?cid=9010&repoName=OAuth2.0-demo-nodejs
+       
