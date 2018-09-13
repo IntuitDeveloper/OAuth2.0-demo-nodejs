@@ -12,30 +12,16 @@
   "dependencies": {
     "atob": "^2.0.3",
     "body-parser": "latest",
-    "btoa": "^1.1.2",
-    "client-oauth2": "^3.2.0",
-    "crypto": "0.0.3",
     "csrf": "^3.0.4",
     "dotenv": "^5.0.1",
     "ejs": "^2.5.2",
-    "exceljs": "^0.8.5",
-    "expect": "^1.20.2",
     "express": "^4.14.0",
     "express-handlebars": "latest",
     "express-session": "^1.14.2",
-    "fs": "0.0.1-security",
     "handlebars": "^4.0.5",
-    "https": "^1.0.0",
     "json2csv": "^3.11.5",
-    "json2xls": "^0.1.2",
-    "jsonwebtoken": "^7.1.9",
-    "mustache-express": "latest",
     "node-quickbooks": "latest",
-    "path": "^0.12.7",
     "query-string": "^5.0.1",
-    "request": "^2.78.0",
-    "rsa-pem-from-mod-exp": "^0.8.4",
-    "save": "^2.3.2",
-    "xlsx-template": "^0.2.0"
+    "request": "^2.78.0"
   }
 }

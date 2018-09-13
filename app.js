@@ -64,41 +64,88 @@ app.get('/authUri', function(req,res) {
     var redirecturl = config.authorization_endpoint + '?' + queryString.stringify({
         'client_id': config.clientId,
         'redirect_uri': config.redirectUri,  //Make sure this path matches entry in application dashboard
-        'scope': config.scopes.connect_to_quickbooks[0]+' '+config.scopes.connect_to_quickbooks[1]+' '+config.scopes.sign_in_with_intuit[0]+' '+config.scopes.sign_in_with_intuit[1]+' '+config.scopes.sign_in_with_intuit[2]+' '+config.scopes.sign_in_with_intuit[3]+' '+config.scopes.sign_in_with_intuit[4],
+        'scope': config.scopes.connect_to_quickbooks[0]+' '+config.scopes.sign_in_with_intuit[0]+' '+config.scopes.sign_in_with_intuit[1]+' '+config.scopes.sign_in_with_intuit[2]+' '+config.scopes.sign_in_with_intuit[3]+' '+config.scopes.sign_in_with_intuit[4],
         'response_type': 'code',
         'state': state
     });
-    res.send(redirecturl);
+
+    // console.log("The redirectURL is :"+redirecturl);
+    res.redirect(redirecturl);
 });
 
-app.get('/callback', function(req, res) {
+/*
+  Route to handle the Launch functionality with SSO Model for Apps
+ */
+app.get('/launch', function(req,res) {
+
+    // Generate csrf Anti Forgery
+    req.session.secret = csrf.secretSync();
+    var state = csrf.create(req.session.secret);
+
+    // Generate the AuthUrl
+    var redirecturl = config.authorization_endpoint + '?' + queryString.stringify({
+        'client_id': config.clientId,
+        'redirect_uri': config.launchRedirectUri,  //Make sure this path matches entry in application dashboard
+        'scope': config.scopes.sign_in_with_intuit[0]+' '+config.scopes.sign_in_with_intuit[1]+' '+config.scopes.sign_in_with_intuit[2]+' '+config.scopes.sign_in_with_intuit[3]+' '+config.scopes.sign_in_with_intuit[4],
+        'response_type': 'code',
+        'state': state
+    });
+
+    // console.log("The redirectURL during Launch is i:"+redirecturl);
+    res.redirect(redirecturl);
+});
+
+
+/*
+  Callback to handle Launch functionality
+ */
+app.get('/launchCallback', function(req, res) {
 
     var parsedUri = queryString.parse(req.originalUrl);
     realmId = parsedUri.realmId;
 
-    var auth = (new Buffer(config.clientId + ':' + config.clientSecret).toString('base64'));
-    var postBody = {
-        url: config.token_endpoint,
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/x-www-form-urlencoded',
-            Authorization: 'Basic ' + auth,
-        },
-        form: {
-            grant_type: 'authorization_code',
-            code: req.query.code,
-            redirect_uri: config.redirectUri
-        }
-    };
-
-    request.post(postBody, function (err, res, data) {
-        accessToken = JSON.parse(res.body);
-            oauth2_token_json = JSON.stringify(accessToken, null,2);
-            console.log('The access tokeb is :'+oauth2_token_json);
-        });
+    console.log("The RealmID context from Intuit during Launch is:"+realmId);
     res.send('');
 });
 
+app.get('/callback', function(req, res) {
+
+    // console.log("Inside Callback :");
+    var parsedUri = queryString.parse(req.originalUrl);
+    realmId = parsedUri.realmId;
+
+    console.log("The RealmID context from Intuit during GetAppNow is :"+realmId);
+     var auth = (new Buffer(config.clientId + ':' + config.clientSecret).toString('base64'));
+    var postBody = {
+         url: config.token_endpoint,
+         headers: {
+             Accept: 'application/json',
+             'Content-Type': 'application/x-www-form-urlencoded',
+             Authorization: 'Basic ' + auth,
+         },
+         form: {
+             grant_type: 'authorization_code',
+             code: req.query.code,
+             redirect_uri: config.redirectUri
+         }
+     };
+
+     request.post(postBody, function (err, res, data) {
+         accessToken = JSON.parse(res.body);
+             oauth2_token_json = JSON.stringify(accessToken, null,2);
+             console.log('The access tokeb is :'+oauth2_token_json);
+         });
+    res.send('');
+});
+
+
+app.get('/launch', function(req, res) {
+
+    var parsedUri = queryString.parse(req.originalUrl);
+    console.log("The query params are :"+ JSON.stringify(parsedUri, null,2));
+
+    console.log("The req query is :"+ JSON.stringify(req.query, null,2));
+});
 app.get('/refreshAccessToken', function(req,res){
 
     // save the access token somewhere on behalf of the logged in user
@@ -158,4 +205,36 @@ app.get('/getCompanyInfo', function(req,res){
 // Start server on HTTP (will use ngrok for HTTPS forwarding)
 app.listen(3000, function () {
     console.log('Example app listening on port 3000!')
+});
+
+app.post('/delighted', function(req, res) {
+
+    console.log(JSON.stringify(req.body));
+
+    // // console.log("Inside Callback :");
+    // var parsedUri = queryString.parse(req.originalUrl);
+    // realmId = parsedUri.realmId;
+    //
+    // console.log("The RealmID context from Intuit during GetAppNow is :"+realmId);
+    // var auth = (new Buffer(config.clientId + ':' + config.clientSecret).toString('base64'));
+    // var postBody = {
+    //     url: config.token_endpoint,
+    //     headers: {
+    //         Accept: 'application/json',
+    //         'Content-Type': 'application/x-www-form-urlencoded',
+    //         Authorization: 'Basic ' + auth,
+    //     },
+    //     form: {
+    //         grant_type: 'authorization_code',
+    //         code: req.query.code,
+    //         redirect_uri: config.redirectUri
+    //     }
+    // };
+    //
+    // request.post(postBody, function (err, res, data) {
+    //     accessToken = JSON.parse(res.body);
+    //     oauth2_token_json = JSON.stringify(accessToken, null,2);
+    //     console.log('The access tokeb is :'+oauth2_token_json);
+    // });
+    res.send('');
 });

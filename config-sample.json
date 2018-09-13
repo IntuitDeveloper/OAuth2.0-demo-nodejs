@@ -1,7 +1,7 @@
 {
-  "clientId": "",
-  "clientSecret": "",
-  "redirectUri": "http://localhost:3000/callback",
+  "clientId": "Enter ClientId",
+  "clientSecret": "Enter ClientSecret",
+  "redirectUri": "Enter Redirect URI",
   "authorization_endpoint":"https://appcenter.intuit.com/connect/oauth2",
   "token_endpoint":"https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer",
   "sandbox_api_uri": "https://sandbox-quickbooks.api.intuit.com/v3/company/",
