@@ -77,7 +77,7 @@ Here are the steps to configure ngrok
 2. Expose your localhost by running "ngrok http 3000" on the command line.  
 3. You will then get a forwarding url that looks something like this: Forwarding https://755c8b38.ngrok.io -> localhost:3000
 
-This will expose localhost:3000 to the Internet. Your endpoint url will now be https://755c8b38.ngrok.io/webhooks Copy this url and use it for setting the redirectUri  [Intuit Developer Portal](https://developer.intuit.com) for your app.
+This will expose localhost:3000 to the Internet. Your endpoint url will now be https://755c8b38.ngrok.io/callback Copy this url and use it for setting the redirectUri  [Intuit Developer Portal](https://developer.intuit.com) for your app.
 
 
 ## Difference between OAuth2.0 and OpenID Connect
@@ -131,7 +131,7 @@ $ npm start
 ### Start ngrok (if you are using ngrok )
 
 ```bash
-$ ngrok http 3000
+$ ngrok http 8000
 ```
 
 Go to the URL (you must start ngrok if using it):
