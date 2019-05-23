@@ -74,7 +74,7 @@ Click on the URL and follow through the instructions given in the sample app.
 
 Project Repo
 
-* https://github.intuit.com/abisalehalliprasan/oauth-jsclient
+* https://github.com/IntuitDeveloper/OAuth2.0-demo-nodejs
 
 Intuit OAuth2.0 API Reference
 
@@ -88,7 +88,7 @@ Intuit OAuth2.0 Playground
 
 Any reports of problems, comments or suggestions are most welcome.
 
-Please report these on [Issue Tracker in Github](https://github.intuit.com/abisalehalliprasan/oauth-jsclient/issues).
+Please report these on [Issue Tracker in Github](https://github.com/IntuitDeveloper/OAuth2.0-demo-nodejs/issues).
 
 
 [ss1]: https://help.developer.intuit.com/s/samplefeedback?cid=9010&repoName=Intuit-OAuth2.0-Sample-NodeJS
