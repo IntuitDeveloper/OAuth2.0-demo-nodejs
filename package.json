@@ -1,27 +1,22 @@
 {
-  "name": "intuit-demos-webhooks",
-  "version": "0.0.1",
-  "description": "A sample NodeJs application to demonstrate Webhooks and capture the notifications into a (csv) format file. This demo includes OAuth2.0",
+  "name": "OAuth2.0-demo-nodejs",
+  "version": "1.0.0",
+  "description": "A sample NodeJs application to demonstrate the use of the client OAuth library",
   "scripts": {
     "start": "node app",
     "test": "./node_modules/mocha/bin/mocha test/**/*-test.js --reporter spec"
   },
-  "author": "anil_kumar",
-  "license": "MIT",
-  "homepage": "https://github.com/anilkumarbp/SampleApp-WebhookNotifications-nodejs",
+  "author": "anil_kumar3@intuit.com",
+  "license": "APACHE",
+  "homepage": "https://github.intuit.com/IntuitDeveloper/OAuth2.0-demo-nodejs",
   "dependencies": {
-    "atob": "^2.0.3",
     "body-parser": "latest",
-    "csrf": "^3.0.4",
     "dotenv": "^5.0.1",
     "ejs": "^2.5.2",
     "express": "^4.14.0",
-    "express-handlebars": "latest",
     "express-session": "^1.14.2",
-    "handlebars": "^4.0.5",
-    "json2csv": "^3.11.5",
-    "node-quickbooks": "latest",
-    "query-string": "^5.0.1",
-    "request": "^2.78.0"
+    "intuit-oauth": "^1.2.0",
+    "ngrok": "^2.2.9",
+    "path": "^0.12.7"
   }
 }

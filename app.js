@@ -1,153 +1,167 @@
+'use strict';
+
 require('dotenv').config();
 
+/**
+ * Require the dependencies
+ * @type {*|createApplication}
+ */
 var express = require('express');
-var session = require('express-session');
-var request = require('request');
 var app = express();
 var path = require('path');
-var QuickBooks = require('node-quickbooks');
-var queryString = require('query-string');
-var Tokens = require('csrf');
-var csrf = new Tokens();
-var config = require('./config.json');
+var OAuthClient = require('intuit-oauth');
+var bodyParser = require('body-parser');
+var ngrok =  (process.env.NGROK_ENABLED==="true") ? require('ngrok'):null;
 
-// Configure View and Handlebars
-app.use(express.static(path.join(__dirname, '')))
-app.set('views', path.join(__dirname, 'views'))
-var exphbs = require('express-handlebars');
-var hbs = exphbs.create({});
-app.engine('handlebars', hbs.engine);
-app.set('view engine', 'handlebars');
-app.use(session({secret: 'secret', resave: 'false', saveUninitialized: 'false'}))
 
-/*
-Create body parsers for application/json and application/x-www-form-urlencoded
+/**
+ * Configure View and Handlebars
  */
-var bodyParser = require('body-parser')
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(express.static(path.join(__dirname, '/public')));
+app.engine('html', require('ejs').renderFile);
+app.set('view engine', 'html');
 app.use(bodyParser.json())
-var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
-/*
-App Variables
+var urlencodedParser = bodyParser.urlencoded({ extended: false });
+
+/**
+ * App Variables
+ * @type {null}
  */
-var token_json,realmId,accessToken;
+var oauth2_token_json = null,
+    redirectUri = '';
 
 
+/**
+ * Instantiate new Client
+ * @type {OAuthClient}
+ */
 
-app.use(express.static('views'));
+var oauthClient = null;
 
+
+/**
+ * Home Route
+ */
 app.get('/', function(req, res) {
 
-  // Render home page with params
-  res.render('index', {
-    redirect_uri: config.redirectUri,
-    token_json: token_json
-  });
+    res.render('index');
 });
 
-app.get('/authUri', function(req,res) {
+/**
+ * Get the AuthorizeUri
+ */
+app.get('/authUri', urlencodedParser, function(req,res) {
 
-  /*
-  Generate csrf Anti Forgery
-   */
-  req.session.secret = csrf.secretSync();
-  var state = csrf.create(req.session.secret);
+    oauthClient = new OAuthClient({
+        clientId: req.query.json.clientId,
+        clientSecret: req.query.json.clientSecret,
+        environment: req.query.json.environment,
+        redirectUri: req.query.json.redirectUri
+    });
 
-  /*
-  Generate the AuthUrl
-   */
-  var redirecturl = config.authorization_endpoint +
-    '?client_id=' + config.clientId +
-    '&redirect_uri=' + encodeURIComponent(config.redirectUri) +  //Make sure this path matches entry in application dashboard
-    '&scope='+ config.scopes.connect_to_quickbooks[0] +
-    '&response_type=code' +
-    '&state=' + state;
-
-  res.send(redirecturl);
-
+    var authUri = oauthClient.authorizeUri({scope:[OAuthClient.scopes.Accounting],state:'intuit-test'});
+    res.send(authUri);
 });
 
+
+/**
+ * Handle the callback to extract the `Auth Code` and exchange them for `Bearer-Tokens`
+ */
 app.get('/callback', function(req, res) {
 
-  var parsedUri = queryString.parse(req.originalUrl);
-  realmId = parsedUri.realmId;
+    oauthClient.createToken(req.url)
+       .then(function(authResponse) {
+             oauth2_token_json = JSON.stringify(authResponse.getJson(), null,2);
+         })
+        .catch(function(e) {
+             console.error(e);
+         });
 
-  var auth = (new Buffer(config.clientId + ':' + config.clientSecret).toString('base64'));
-  var postBody = {
-    url: config.token_endpoint,
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/x-www-form-urlencoded',
-      Authorization: 'Basic ' + auth,
-    },
-    form: {
-      grant_type: 'authorization_code',
-      code: req.query.code,
-      redirect_uri: config.redirectUri
-    }
-  };
-
-  request.post(postBody, function (err, res, data) {
-    accessToken = JSON.parse(res.body);
-    token_json = JSON.stringify(accessToken, null,2);
-  });
-  res.send('');
+    res.send('');
 
 });
 
+/**
+ * Display the token : CAUTION : JUST for sample purposes
+ */
+app.get('/retrieveToken', function(req, res) {
+    res.send(oauth2_token_json);
+});
+
+
+/**
+ * Refresh the access-token
+ */
 app.get('/refreshAccessToken', function(req,res){
 
-  var auth = (new Buffer(config.clientId + ':' + config.clientSecret).toString('base64'));
-  var postBody = {
-    url: config.token_endpoint,
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/x-www-form-urlencoded',
-      'Authorization': 'Basic ' + auth,
-    },
-    form: {
-      grant_type: 'refresh_token',
-      refresh_token: accessToken.refresh_token
-    }
-  };
+    oauthClient.refresh()
+        .then(function(authResponse){
+            console.log('The Refresh Token is  '+ JSON.stringify(authResponse.getJson()));
+            oauth2_token_json = JSON.stringify(authResponse.getJson(), null,2);
+            res.send(oauth2_token_json);
+        })
+        .catch(function(e) {
+            console.error(e);
+        });
 
-  request.post(postBody, function (err, res, data) {
-    var accessToken = JSON.parse(res.body);
-    token_json = JSON.stringify(accessToken, null,2);
-    console.log('The Refreshed token is :'+ token_json);
-  });
-  res.send(accessToken);
 
 });
 
+/**
+ * getCompanyInfo ()
+ */
 app.get('/getCompanyInfo', function(req,res){
 
-  // save the access token somewhere on behalf of the logged in user
-  var qbo = new QuickBooks(config.clientId,
-    config.clientSecret,
-    accessToken.access_token, /* oAuth access token */
-    false, /* no token secret for oAuth 2.0 */
-    realmId,
-    config.useSandbox, /* use a sandbox account */
-    true, /* turn debugging on */
-    34, /* minor version */
-    '2.0', /* oauth version */
-    accessToken.refresh_token /* refresh token */);
 
-  qbo.getCompanyInfo(realmId, function(err, companyInfo) {
-    if (err) {
-      console.log(err);
-      res.send(err);
-    }
-    else {
-      console.log("The response is :" + JSON.stringify(companyInfo,null,2));
-      res.send(companyInfo);
-    }
-  });
+    var companyID = oauthClient.getToken().realmId;
+
+    var url = oauthClient.environment == 'sandbox' ? OAuthClient.environment.sandbox : OAuthClient.environment.production ;
+
+    oauthClient.makeApiCall({url: url + 'v3/company/' + companyID +'/companyinfo/' + companyID})
+        .then(function(authResponse){
+            console.log("The response for API call is :"+JSON.stringify(authResponse));
+            res.send(JSON.parse(authResponse.text()));
+        })
+        .catch(function(e) {
+            console.error(e);
+        });
 });
 
 
-// Start server on HTTP (will use ngrok for HTTPS forwarding)
-app.listen(3000, function () {
-  console.log('Example app listening on port 3000!')
-})
+/**
+ * Start server on HTTP (will use ngrok for HTTPS forwarding)
+ */
+const server = app.listen(process.env.PORT || 8000, () => {
+    console.log(`💻 Server listening on port ${server.address().port}`);
+if(!ngrok){
+    redirectUri = `${server.address().port}` + '/callback';
+    console.log(`💳  See the Sample App in your browser : ` + 'http://localhost:' + `${server.address().port}`);
+    console.log(`💳  Copy this into Redirect URI on the browser : ` + 'http://localhost:' + `${server.address().port}` + '/callback');
+    console.log(`💻  Make Sure this redirect URI is also copied on your app in : https://developer.intuit.com`);
+}
+
+});
+
+/**
+ * Optional : If NGROK is enabled
+ */
+if (ngrok) {
+
+    console.log("NGROK Enabled");
+    ngrok.connect({addr: process.env.PORT || 8000}, (err, url) => {
+            if (err) {
+                process.exit(1);
+            }
+            else {
+                redirectUri = url + '/callback';
+                console.log(`💳  See the Sample App in your browser: ${url}`);
+                console.log(`💳  Copy and paste this Redirect URI on the browser :  ${redirectUri}`);
+                console.log(`💻  Make Sure this redirect URI is also copied on your app in : https://developer.intuit.com`);
+
+            }
+        }
+    );
+}
+
