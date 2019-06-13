@@ -18,7 +18,6 @@ This is a `sample` app built using Node.js and Express Framework to showcase how
 ### Via Github Repo (Recommended)
 
 ```bash
-$ cd sample
 $ npm install
 ```
 
