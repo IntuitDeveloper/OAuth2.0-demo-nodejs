@@ -16,7 +16,7 @@
     "express": "^4.14.0",
     "express-session": "^1.14.2",
     "intuit-oauth": "^1.2.0",
-    "ngrok": "^2.2.9",
+    "ngrok": "^3.2.7",
     "path": "^0.12.7"
   }
 }
